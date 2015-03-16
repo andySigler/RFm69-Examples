@@ -7,11 +7,15 @@
 
 RFM69 radio;
 
+#define myFrequency RF69_915MHZ // or RF69_433MHZ (check your radio)
+int myNetwork = 123; // radios must share the same network (0-255)
+int myID = 0; // radios should be given unique ID's (0-254, 255 = BROADCAST)
+
 // our pre-defined packet structure
-// this struct is shared between all nodes
+// this struct must be shared between all nodes
 typedef struct {
-  int sensorOne;
-  int sensorTwo;
+  int sensorReading;
+  unsigned long aliveTime;
 } Packet;
 
 ///////////////////////////
@@ -20,12 +24,12 @@ typedef struct {
 
 void setup() {
   Serial.begin(9600);
-  
+  w
   // setup the radio
-  radio.initialize(RF69_915MHZ, 1, 1);
-  
-  Serial.println("RADIO INITIALIZED\n\n");
-  Serial.println("Enter '1' to broadcast a Packet");
+  radio.initialize(myFrequency, myNetwork, myID);
+    
+  Serial.println("\nRADIO INITIALIZED\n");
+  Serial.println("Listening for sensor nodes...");
 }
 
 ///////////////////////////
@@ -34,19 +38,8 @@ void setup() {
 
 void loop() {
   
-  if(Serial.available()>0){
-    if(Serial.read()=='1'){
-  
-      // create new instance of our Packet struct
-      Packet packet;
-      packet.sensorOne = analogRead(A0); // write values from the analog pins
-      packet.sensorTwo = analogRead(A1);
-      
-      // broadcasting this packet, so all ID's on this network can hear it
-      radio.send(255,  &packet, sizeof(packet)); // notice the & next to packet
-      Serial.println("Sent");
-    }
-  }
+  // the hub in this example doesn't sleep
+  // so it should be plugged into a power outlet or computer or something
   
   // ALWAYS check to see if we've received a message
   if (radio.receiveDone()) {
@@ -59,10 +52,10 @@ void loop() {
       Packet newPacket = *(Packet*)radio.DATA;
       Serial.print("[");
       Serial.print(radio.SENDERID);
-      Serial.print("] sensorOne = ");
-      Serial.print(newPacket.sensorOne);
-      Serial.print("\tsensorTwo = ");
-      Serial.println(newPacket.sensorTwo);
+      Serial.print("] sensorReading = ");
+      Serial.print(newPacket.sensorReading);
+      Serial.print("] aliveTime = ");
+      Serial.println(newPacket.aliveTime);
     }
   }
 }
