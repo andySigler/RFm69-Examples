@@ -4,7 +4,7 @@
 
 /*
 
-  This sketch demonstrates a simple wireless sensor node,
+  This sketch demonstrates a simple wireless low-power sensor node,
   sending packets to the receiver on this network.
   To make parsing packets easier, data is sent using the C++ struct.
   This allows both sender and receiver to read and write to the packet
