@@ -2,6 +2,23 @@
 ///////////////////////////
 ///////////////////////////
 
+/*
+
+  This sketch demonstrates a the different options
+  available when using an RFm69 radio tranceiver.
+  
+  See the "wiring_rfm69.png" for how to hookup the circuit.
+  
+  Be sure you have downloaded and installed the library used here:
+  
+    RFm69 Library: https://github.com/lowpowerlab/rfm69
+
+*/
+
+///////////////////////////
+///////////////////////////
+///////////////////////////
+
 #include <RFM69.h>
 #include <SPI.h>
 

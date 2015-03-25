@@ -2,6 +2,26 @@
 ///////////////////////////
 ///////////////////////////
 
+/*
+
+  This sketch demonstrates a simple wireless hub
+  listening for strings from other nodes on this network.
+  
+  See the "wiring_rfm69.png" for how to hookup the circuit.
+  
+  To complete the example, run the "ez_send.ino" sketch
+  on another Arduino with an RFm69 connected
+  
+  Be sure you have downloaded and installed the library used here:
+  
+    RFm69 Library: https://github.com/lowpowerlab/rfm69
+
+*/
+
+///////////////////////////
+///////////////////////////
+///////////////////////////
+
 #include <RFM69.h>
 #include <SPI.h>
 
