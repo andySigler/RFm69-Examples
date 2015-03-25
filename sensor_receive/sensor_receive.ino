@@ -56,7 +56,7 @@ void loop() {
       Serial.print(radio.SENDERID);
       Serial.print("]\tsensorReading = ");
       Serial.print(val);
-      Serial.print("]\taliveTime = ");
+      Serial.print("\taliveTime = ");
       Serial.println(time);
     }
   }
