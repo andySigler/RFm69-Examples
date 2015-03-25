@@ -18,6 +18,7 @@
   Be sure you have downloaded and installed the library used here:
   
     RFm69 Library: https://github.com/lowpowerlab/rfm69
+    Narcoleptic Library: https://code.google.com/p/narcoleptic/downloads/list
 
 */
 
