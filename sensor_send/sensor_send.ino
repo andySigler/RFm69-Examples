@@ -16,7 +16,7 @@ int hubID = 0; // the receiver for all sensor nodes in this example
 
 int secondsDelay = 5; // the number of seconds this node will sleep between sensor readings
 
-// our pre-defined packet structure
+// instead of sending a string, we can send a struct
 // this struct must be shared between all nodes
 typedef struct {
   int sensorReading; // value from analogRead()
@@ -47,15 +47,20 @@ void setup() {
 
 void loop() {
   
+  // first put the radio and the CPU to sleep, saving precious battery life
+  // the radio will not receive data while sleeping
+  
   radio.sleep(); // radio will wake back up when we send data
-  Narcoleptic.delay(secondsDelay * 1000); // convert seconds to milliseconds for delay()
+  
+  // put microcontroller to sleep for a number of milliseconds
+  Narcoleptic.delay(secondsDelay * 1000); // convert seconds to milliseconds
   
   // create new instance of our Packet struct
   Packet packet;
   packet.sensorReading = analogRead(A0); // read values from the analog pins
-  packet.aliveTime = millis();
+  packet.aliveTime = millis(); // how long has this microcontroller been on?
   
-  int numberOfRetries = 3;
+  int numberOfRetries = 5;
   
   // send reliable packet to the hub
   // notice the & next to packet when sending a struct

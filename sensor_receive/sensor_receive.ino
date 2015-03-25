@@ -24,7 +24,7 @@ typedef struct {
 
 void setup() {
   Serial.begin(9600);
-  w
+
   // setup the radio
   radio.initialize(myFrequency, myNetwork, myID);
     
@@ -37,25 +37,27 @@ void setup() {
 ///////////////////////////
 
 void loop() {
-  
-  // the hub in this example doesn't sleep
-  // so it should be plugged into a power outlet or computer or something
-  
-  // ALWAYS check to see if we've received a message
+    
+  // always check to see if we've received a message
   if (radio.receiveDone()) {
           
-    // if the received message is the same size as our pre-defined Packet
+    // if the received message is the same size as our pre-defined Packet struct
     // then assume that it is actually one of our Packets
     if(radio.DATALEN == sizeof(Packet)) {
     
       // convert the radio's raw byte array to our pre-defined Packet struct
       Packet newPacket = *(Packet*)radio.DATA;
+      
+      // read the values from the data struct
+      int val = newPacket.sensorReading;
+      unsigned long time = newPacket.aliveTime;
+      
       Serial.print("[");
       Serial.print(radio.SENDERID);
-      Serial.print("] sensorReading = ");
-      Serial.print(newPacket.sensorReading);
-      Serial.print("] aliveTime = ");
-      Serial.println(newPacket.aliveTime);
+      Serial.print("]\tsensorReading = ");
+      Serial.print(val);
+      Serial.print("]\taliveTime = ");
+      Serial.println(time);
     }
   }
 }

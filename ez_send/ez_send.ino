@@ -59,18 +59,18 @@ void loop() {
       
       Serial.print("Sending...");
       
-      int retries = 3; // maximum number of times this message will attempt to get acknowledged
+      int retries = 5; // maximum number of times this message will attempt to get acknowledged
       
-      boolean didReceive = radio.sendWithRetry(receiverID, payload, payloadSize, retries);
+      boolean gotACK = radio.sendWithRetry(receiverID, payload, payloadSize, retries);
     
-      if(didReceive) {
-        Serial.print("Acknowledged");
-        Serial.print(" [");
+      if(gotACK) {
+        Serial.print("[");
         Serial.print(radio.readRSSI()); // get the signal strength in dB
         Serial.println("] ");
+        Serial.print("got ACK");
       }
       else {
-        Serial.println("Failed");
+        Serial.println("No Acknowledged");
       }
     }
   }
