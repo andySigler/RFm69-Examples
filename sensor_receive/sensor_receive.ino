@@ -12,7 +12,8 @@
   
   See the "wiring_rfm69.png" for how to hookup the circuit.
   
-  To complete the example, run the "sensor_send.ino" sketch
+  To complete the example, run the "sensor_send.ino" sketch,
+  or the "sensor_send_lowpower.ino" sketch
   on another Arduino with an RFm69 connected
   
   Be sure you have downloaded and installed the library used here:
@@ -40,8 +41,9 @@ int myID = 0; // radios should be given unique ID's (0-254, 255 = BROADCAST)
 // our pre-defined packet structure
 // this struct must be shared between all nodes
 typedef struct {
-  int sensorReading;
-  unsigned long aliveTime;
+  int sensor0;
+  int sensor1;
+  int sensor2;
 } Packet;
 
 ///////////////////////////
@@ -52,7 +54,7 @@ void setup() {
   Serial.begin(9600);
 
   // setup the radio
-  radio.initialize(myFrequency, myNetwork, myID);
+  radio.initialize(myFrequency, myID, myNetwork);
     
   Serial.println("\nRADIO INITIALIZED\n");
   Serial.println("Listening for sensor nodes...");
@@ -66,24 +68,31 @@ void loop() {
     
   // always check to see if we've received a message
   if (radio.receiveDone()) {
-          
+              
     // if the received message is the same size as our pre-defined Packet struct
     // then assume that it is actually one of our Packets
-    if(radio.DATALEN == sizeof(Packet)) {
-    
+    if(radio.DATALEN == sizeof(Packet)) {  
+      
       // convert the radio's raw byte array to our pre-defined Packet struct
       Packet newPacket = *(Packet*)radio.DATA;
+      int senderID = radio.SENDERID;
       
-      // read the values from the data struct
-      int val = newPacket.sensorReading;
-      unsigned long time = newPacket.aliveTime;
+      // if requested, acknowledge that the packet was received
+      if (radio.ACKRequested()){
+        radio.sendACK();
+      }
       
-      Serial.print("[");
-      Serial.print(radio.SENDERID);
-      Serial.print("]\tsensorReading = ");
-      Serial.print(val);
-      Serial.print("\taliveTime = ");
-      Serial.println(time);
+      Serial.print("(");
+      Serial.print(senderID);
+      Serial.print(")\t");
+      Serial.print(newPacket.sensor0);
+      Serial.print("\t");
+      Serial.print(newPacket.sensor1);
+      Serial.print("\t");
+      Serial.println(newPacket.sensor2);
+    }
+    else {
+      Serial.println("got unknown packet!");
     }
   }
 }

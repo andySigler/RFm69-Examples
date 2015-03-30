@@ -31,12 +31,13 @@
 
 #include <RFM69.h>
 #include <SPI.h> // the RFM69 library uses SPI
+#include <Narcoleptic.h>
 
 RFM69 radio;
 
 #define myFrequency RF69_915MHZ // or RF69_433MHZ (check your radio)
 int myNetwork = 123; // radios must share the same network (0-255)
-int myID = 1; // radios should be given unique ID's (0-254, 255 = BROADCAST)
+int myID = 2; // radios should be given unique ID's (0-254, 255 = BROADCAST)
 
 int hubID = 0; // the receiver for all sensor nodes in this example
 
@@ -62,6 +63,9 @@ void setup() {
   Serial.begin(9600);
   Serial.println("\nRADIO INITIALIZED");
   Serial.println("Sending sensor values");
+  Serial.println("Narcoleptic stops Serial, \nso we won't print anything inside loop()");
+  
+  delay(3000);
 }
 
 ///////////////////////////
@@ -70,26 +74,23 @@ void setup() {
 
 void loop() {
   
-  delay(1000);
+  // set radio to use less power
+  // it will wake up the next time send() or sendWithRetry() is called
+  radio.sleep();
+  
+  // Narcoleptic stops PWM, millis(), timer, Serial, everything...
+  // keep this in mind when using it!!!
+  Narcoleptic.delay(1000);
   
   // create new instance of our Packet struct
   Packet packet;
   packet.sensor0 = analogRead(A0); // read values from the analog pins
   packet.sensor1 = analogRead(A1);
   packet.sensor2 = analogRead(A2);
-  
-  int numberOfRetries = 5;
     
-  // send reliable packet to the hub
+  // send unreliable packet to the hub
   // notice the & next to packet when sending a struct
-  boolean gotACK = radio.sendWithRetry(hubID,  &packet, sizeof(packet),numberOfRetries);
-  
-  if(gotACK) {
-    Serial.println("got acknowledgment");
-  }
-  else {
-    Serial.println("failed acknowledgment");
-  }
+  radio.send(hubID,  &packet, sizeof(packet));
 }
 
 ///////////////////////////
